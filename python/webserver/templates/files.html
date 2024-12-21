@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File list</title>
+</head>
+<body>
+    <h1>Video files: </h1>
+    <ul>
+        {% for file in files %}
+        <li><a href="/files/{{ file }}" target="_blank">{{ file }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
