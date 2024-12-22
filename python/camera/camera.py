@@ -11,8 +11,10 @@ def record_video(filename, duration=60):
     config = camera.create_video_configuration(main={"size": (1280, 720)})
     camera.configure(config)
 
+    camera.controls.FrameRate = 20
+
     # Verwende FfmpegOutput mit libx264-Encoder
-    encoder = H264Encoder(bitrate=5000000)
+    encoder = H264Encoder(bitrate=2500000)
     output = FfmpegOutput(filename)
     camera.start_recording(encoder, output)
 
@@ -29,7 +31,7 @@ def manage_videos(directory, max_videos=3000):
 
 def main():
     video_dir = os.path.expanduser("~/video_files")  # Benutze os.path.expanduser
-    video_duration = 5  # Sekunden
+    video_duration = 60  # Sekunden
 
     if not os.path.exists(video_dir):
         os.makedirs(video_dir)
