@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import subprocess
+from subprocess import call
 import os
 import signal
 import datetime
@@ -56,6 +57,16 @@ def list_files():
 @app.route('/files/<filename>')
 def serve_file(filename):
     return send_from_directory(files_dir, filename)
+
+@app.route('/reboot')
+def reboot():
+    call("sudo reboot", shell=True)
+    return 'Reboot initiated'
+
+@app.route('/shutdown')
+def shutdown():
+    call("sudo shutdown -h now", shell=True)
+    return 'Shutdown initiated'
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
