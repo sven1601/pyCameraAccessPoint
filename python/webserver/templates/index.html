@@ -10,4 +10,12 @@
 
     <button onclick="location.href='/list_files'">Show Files</button>
 </body>
+<body>
+    <h1>Time setting</h1>
+    <form method="POST">
+        <label for="new_time">New time: (YYYY-MM-DD HH:MM:SS):</label>
+        <input type="text" name="new_time" value="{{ current_time }}" id="new_time" required>
+        <button type="submit">Set Time</button>
+    </form>
+</body>
 </html>

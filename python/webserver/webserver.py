@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import subprocess
 import os
 import signal
+import datetime
 
 app = Flask(__name__)
 
@@ -12,9 +13,19 @@ process2 = None
 # Pfad zum Ordner mit den aufzulistenden Dateien
 files_dir = '/home/cam/video_files/'
 
-@app.route('/')
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template('index.html')
+    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    if request.method == "POST":
+        try:
+            # Zeit vom Client empfangen (im Format 'YYYY-MM-DD HH:MM:SS')
+            new_time = request.form["new_time"] 
+            # Befehl zum Setzen der Systemzeit ausführen
+            subprocess.run(["sudo", "date", "-s", new_time])  
+            return "Time is set!"
+        except Exception as e:
+            return f"Error during time setting: {e}"
+    return render_template("index.html", current_time=current_time)
 
 @app.route('/start_camScript')
 def start_script1():
