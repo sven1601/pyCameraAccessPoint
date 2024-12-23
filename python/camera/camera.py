@@ -3,15 +3,35 @@ from datetime import datetime
 from picamera2 import Picamera2
 from picamera2.encoders import H264Encoder, Quality
 from picamera2.outputs import FfmpegOutput
+import libcamera
 import os
+from configparser import ConfigParser
+
+config = ConfigParser()
+cameraSettingsFile = '/home/cam/PythonVenv/Cam/settings.ini'
+config.read(cameraSettingsFile)
+flipH = config.getint('main', 'flipH')
+flipV = config.getint('main', 'flipV')
 
 # Funktion zur Videoaufnahme
 def record_video(filename, duration=60):
+    global flipH
+    global flipV
+    
     camera = Picamera2()
     config = camera.create_video_configuration(main={"size": (1280, 720)})
+
+    if flipH == 0 and flipV == 0:
+        config["transform"] = libcamera.Transform(hflip=False, vflip=False)
+    elif flipH == 1 and flipV == 0:
+        config["transform"] = libcamera.Transform(hflip=True, vflip=False)
+    elif flipH == 0 and flipV == 1:
+        config["transform"] = libcamera.Transform(hflip=False, vflip=True)
+    elif flipH == 1 and flipV == 1:
+        config["transform"] = libcamera.Transform(hflip=True, vflip=True)
     camera.configure(config)
 
-    camera.controls.FrameRate = 20
+    camera.controls.FrameRate = 20    
 
     # Verwende FfmpegOutput mit libx264-Encoder
     encoder = H264Encoder(bitrate=2500000)

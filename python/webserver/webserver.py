@@ -17,6 +17,7 @@ config = ConfigParser()
 # Pfad zum Ordner mit den aufzulistenden Dateien
 files_dir = '/home/cam/video_files/'
 cameraSettingsFile = '/home/cam/PythonVenv/Cam/settings.ini'
+testPicture = '/home/cam/PythonVenv/Webserver/static/testPic.jpg'
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -103,21 +104,30 @@ def flipV_not():
         config.write(f)
     return get_picture()
 
+@app.route('/flip_reset')
+def flip_reset():
+    config.read(cameraSettingsFile)
+    config.set('main', 'flipH', '0')
+    config.set('main', 'flipV', '0')
+    with open(cameraSettingsFile, 'w') as f:
+        config.write(f)
+    return get_picture()
+
 @app.route('/get_picture')
 def get_picture():
-    call("rm /home/cam/PythonVenv/Webserver/static/testPic.jpg", shell=True)
+    call(f'rm {testPicture}', shell=True)
 
     config.read(cameraSettingsFile)
     flipH = config.getint('main', 'flipH')
     flipV = config.getint('main', 'flipV')
     if flipH == 0 and flipV == 0:
-        pictureProcess = subprocess.Popen(['rpicam-still', '-o', '/home/cam/PythonVenv/Webserver/static/testPic.jpg', '--width', '640', '--height', '480'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pictureProcess = subprocess.Popen(['rpicam-still', '-o', testPicture, '--width', '640', '--height', '480'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif flipH == 1 and flipV == 0:
-        pictureProcess = subprocess.Popen(['rpicam-still', '-o', '/home/cam/PythonVenv/Webserver/static/testPic.jpg', '--width', '640', '--height', '480', '--hflip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pictureProcess = subprocess.Popen(['rpicam-still', '-o', testPicture, '--width', '640', '--height', '480', '--hflip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif flipH == 0 and flipV == 1:
-        pictureProcess = subprocess.Popen(['rpicam-still', '-o', '/home/cam/PythonVenv/Webserver/static/testPic.jpg', '--width', '640', '--height', '480', '--vflip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pictureProcess = subprocess.Popen(['rpicam-still', '-o', testPicture, '--width', '640', '--height', '480', '--vflip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif flipH == 1 and flipV == 1:
-        pictureProcess = subprocess.Popen(['rpicam-still', '-o', '/home/cam/PythonVenv/Webserver/static/testPic.jpg', '--width', '640', '--height', '480', '--hflip', '--vflip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pictureProcess = subprocess.Popen(['rpicam-still', '-o', testPicture, '--width', '640', '--height', '480', '--hflip', '--vflip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     pictureProcess.wait()
     (stdout, stderr) = pictureProcess.communicate()
 
