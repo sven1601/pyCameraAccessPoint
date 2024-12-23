@@ -17,8 +17,11 @@
         <input type="text" name="new_time" value="{{ current_time }}" id="new_time" required>
         <button type="submit">Set Time</button>
     </form>
-    <hr>
+</body>
+<hr>
+<body>
     <h1>Camera setting</h1>
+    <label>Picture recording only possible, when video recording script is not running!</label><br>
     <img src="{{ url_for('static', filename='testPic.jpg') }}"/><br>
     <button onclick="location.href='/get_picture'">Take picture</button><br>
     <button onclick="location.href='/flipH'">Flip horizontally</button>
