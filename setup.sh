@@ -17,7 +17,6 @@ read -p "Enter your WiFi Countrycode (US, DE, ...): " wifiCode
 read -p "Enter your desired password: " pw1
 read -p "Enter your desired password (again): " pw2
 read -p "Enter your desired ap ip address: " ip
-read -p "Should the camera recording directly be started after boot? [y/n] " camAutostart
 
 if [ "$pw1" = "$pw2" ] && \
    [ $(expr length "$wifiCode") -gt 0 ] && \
@@ -60,10 +59,6 @@ then
     wget $camPyScript
     python -m venv --system-site-packages ~/PythonVenv/Cam
     mv ./camera.py ~/PythonVenv/Cam/
-    if [ "$camAutostart" = "y" ]
-    then
-        (crontab -l ; echo "@reboot wait 20;~/PythonVenv/Cam/bin/python ~/PythonVenv/Cam/camera.py > cameraLog.txt 2>&1") | crontab -
-    fi
     # Other ----------------------------------------------------------------------------------------------------
     sudo sed -i '$a cam ALL=NOPASSWD:/sbin/shutdown' /etc/sudoers
     sudo sed -i '$a cam ALL=NOPASSWD:/sbin/reboot' /etc/sudoers
