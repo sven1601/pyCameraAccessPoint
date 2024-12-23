@@ -14,7 +14,18 @@
     <h1>Time setting</h1>
     <form method="POST">
         <label for="new_time">New time: (YYYY-MM-DD HH:MM:SS):</label>
-        <input type="text" name="new_time" value="{{ current_time }}" id="new_time" required>
+        <input type="text" name="time" id="time" required>
+        <script>
+            const timeField = document.getElementById("time");
+            const now = new Date();
+            const year = now.getFullYear().toString();
+            const month = (now.getMonth()+1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            timeField.value = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        </script>
         <button type="submit">Set Time</button>
     </form>
 </body>

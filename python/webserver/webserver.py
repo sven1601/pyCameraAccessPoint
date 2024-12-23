@@ -20,17 +20,16 @@ cameraSettingsFile = '/home/cam/PythonVenv/Cam/settings.ini'
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     if request.method == "POST":
         try:
             # Zeit vom Client empfangen (im Format 'YYYY-MM-DD HH:MM:SS')
-            new_time = request.form["new_time"] 
+            new_time = request.form["time"] 
             # Befehl zum Setzen der Systemzeit ausführen
             subprocess.run(["sudo", "date", "-s", new_time])  
             return "Time is set!"
         except Exception as e:
             return f"Error during time setting: {e}"
-    return render_template("index.html", current_time=current_time)
+    return render_template("index.html")
 
 @app.route('/start_camScript')
 def start_script1():
@@ -106,7 +105,6 @@ def flipV_not():
 
 @app.route('/get_picture')
 def get_picture():
-    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     call("rm /home/cam/PythonVenv/Webserver/static/testPic.jpg", shell=True)
 
     config.read(cameraSettingsFile)
@@ -126,7 +124,7 @@ def get_picture():
     if pictureProcess.returncode != 0:
         return stderr
     else:
-        return render_template("index.html", current_time=current_time)
+        return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
