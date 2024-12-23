@@ -8,8 +8,8 @@ import datetime
 app = Flask(__name__)
 
 # Globale Variablen, um die Subprozesse zu speichern
-process1 = None
-process2 = None
+cameraProcess = None
+pictureProcess = None
 
 # Pfad zum Ordner mit den aufzulistenden Dateien
 files_dir = '/home/cam/video_files/'
@@ -30,20 +30,20 @@ def index():
 
 @app.route('/start_camScript')
 def start_script1():
-    global process1
-    if process1 is None or process1.poll() is not None:  # Startet nur, wenn es nicht bereits läuft
+    global cameraProcess
+    if cameraProcess is None or cameraProcess.poll() is not None:  # Startet nur, wenn es nicht bereits läuft
         with open("/home/cam/PythonVenv/Cam/output.txt", "w") as outfile, open("/home/cam/PythonVenv/Cam/error.txt", "w") as errfile:
-            process1 = subprocess.Popen(['/home/cam/PythonVenv/Cam/bin/python', '/home/cam/PythonVenv/Cam/camera.py'], stdout=outfile, stderr=errfile)
+            cameraProcess = subprocess.Popen(['/home/cam/PythonVenv/Cam/bin/python', '/home/cam/PythonVenv/Cam/camera.py'], stdout=outfile, stderr=errfile)
             return 'camera.py is running'
     else:
         return 'camera.py is already running'
 
 @app.route('/stop_camScript')
 def stop_script1():
-    global process1
-    if process1 is not None and process1.poll() is None:
-        os.kill(process1.pid, signal.SIGTERM)  # Sendet SIGTERM zum Beenden
-        process1 = None
+    global cameraProcess
+    if cameraProcess is not None and cameraProcess.poll() is None:
+        os.kill(cameraProcess.pid, signal.SIGTERM)  # Sendet SIGTERM zum Beenden
+        cameraProcess = None
         return 'camera.py is stopped'
     else:
         return 'camera.py is not running'
@@ -67,6 +67,19 @@ def reboot():
 def shutdown():
     call("sudo shutdown -h now", shell=True)
     return 'Shutdown initiated'
+
+@app.route('/get_picture')
+def get_picture():
+    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    call("rm /home/cam/PythonVenv/Webserver/static/testPic.jpg", shell=True)
+    pictureProcess = subprocess.Popen(['rpicam-still', '-o', '/home/cam/PythonVenv/Webserver/static/testPic.jpg', '--width', '640', '--height', '480'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    pictureProcess.wait()
+    (stdout, stderr) = pictureProcess.communicate()
+
+    if pictureProcess.returncode != 0:
+        return stderr
+    else:
+        return render_template("index.html", current_time=current_time)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
