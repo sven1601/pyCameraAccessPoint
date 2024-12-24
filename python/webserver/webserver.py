@@ -38,7 +38,7 @@ def start_script1():
     if cameraProcess is None or cameraProcess.poll() is not None:  # Startet nur, wenn es nicht bereits läuft
         with open("/home/cam/PythonVenv/Cam/output.txt", "w") as outfile, open("/home/cam/PythonVenv/Cam/error.txt", "w") as errfile:
             cameraProcess = subprocess.Popen(['/home/cam/PythonVenv/Cam/bin/python', '/home/cam/PythonVenv/Cam/camera.py'], stdout=outfile, stderr=errfile)
-            return 'camera.py is running'
+            return f'camera.py is running ---> PID {cameraProcess.pid}'
     else:
         return 'camera.py is already running'
 
@@ -46,9 +46,10 @@ def start_script1():
 def stop_script1():
     global cameraProcess
     if cameraProcess is not None and cameraProcess.poll() is None:
+        oldPid = cameraProcess.pid
         os.kill(cameraProcess.pid, signal.SIGTERM)  # Sendet SIGTERM zum Beenden
         cameraProcess = None
-        return 'camera.py is stopped'
+        return f'camera.py is stopped ---> PID {oldPid}'
     else:
         return 'camera.py is not running'
 
@@ -56,7 +57,8 @@ def stop_script1():
 def list_files():
     file_list = os.listdir(files_dir)
     file_list.sort(reverse = True)
-    return render_template('files.html', files=file_list)
+    fileCount = len(file_list)
+    return render_template('files.html', files=file_list, fileNum=fileCount)
 
 @app.route('/files/<filename>')
 def serve_file(filename):
