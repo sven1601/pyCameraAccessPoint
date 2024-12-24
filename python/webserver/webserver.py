@@ -60,6 +60,11 @@ def list_files():
     fileCount = len(file_list)
     return render_template('files.html', files=file_list, fileNum=fileCount)
 
+@app.route('/delete_files')
+def delete_files():
+    call(f"rm {files_dir}*", shell=True)
+    return 'Deleted all files'
+
 @app.route('/files/<filename>')
 def serve_file(filename):
     return send_from_directory(files_dir, filename)
