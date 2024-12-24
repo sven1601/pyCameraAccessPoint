@@ -5,9 +5,10 @@
 </head>
 <body>
     <h1>Script Control</h1>
-    <button onclick="location.href='/start_camScript'">Start Recording</button>
-    <button onclick="location.href='/stop_camScript'">Stop Recording</button><br>
-    <button onclick="location.href='/list_files'">Show Files</button>
+    <button onclick="location.href='/start_camScript'" style="width: 200px; height: 30px;">Start Recording</button>
+    <button onclick="location.href='/stop_camScript'" style="width: 200px; height: 30px;">Stop Recording</button><br>
+    <button onclick="location.href='/list_files'" style="width: 200px; height: 30px;">Show Files</button>
+    <button onclick="location.href='/delete_files'" style="width: 200px; height: 30px;">Delete all files</button>
 </body>
 <hr>
 <body>
@@ -26,7 +27,7 @@
             const seconds = now.getSeconds().toString().padStart(2, '0');
             timeField.value = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         </script>
-        <button type="submit">Set Time</button>
+        <button type="submit" style="width: 100px">Set Time</button>
     </form>
 </body>
 <hr>
@@ -34,17 +35,17 @@
     <h1>Camera setting</h1>
     <label>Picture recording only possible, when video recording script is not running!</label><br>
     <img src="{{ url_for('static', filename='testPic.jpg') }}"/><br>
-    <button onclick="location.href='/get_picture'">Take picture</button><br>
-    <button onclick="location.href='/flipH'">Flip horizontally</button>
-    <button onclick="location.href='/flipH_not'">Flip not horizontally</button><br>
-    <button onclick="location.href='/flipV'">Flip vertically</button>    
-    <button onclick="location.href='/flipV_not'">Flip not vertically</button><br>   
-    <button onclick="location.href='/flip_reset'">Reset flip settings</button>
+    <button onclick="location.href='/get_picture'" style="width: 150px; height: 30px;">Take picture</button><br>
+    <button onclick="location.href='/flipH'" style="width: 150px; height: 30px;">Flip horizontally</button>
+    <button onclick="location.href='/flipH_not'" style="width: 150px; height: 30px;">Flip not horizontally</button><br>
+    <button onclick="location.href='/flipV'" style="width: 150px; height: 30px;">Flip vertically</button>
+    <button onclick="location.href='/flipV_not'" style="width: 150px; height: 30px;">Flip not vertically</button><br>   
+    <button onclick="location.href='/flip_reset'" style="width: 150px; height: 30px;">Reset flip settings</button>
 </body>
 <hr>
 <body>
     <h1>Pi Control</h1>
-    <button onclick="location.href='/reboot'">Reboot</button>
-    <button onclick="location.href='/shutdown'">Shutdown</button>
+    <button onclick="location.href='/reboot'" style="width: 200px; height: 30px;">Reboot</button>
+    <button onclick="location.href='/shutdown'" style="width: 200px; height: 30px;">Shutdown</button>
 </body>
 </html>
