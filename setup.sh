@@ -49,14 +49,14 @@ sudo systemctl disable dnsmasq
 sudo systemctl stop dnsmasq
 sudo sed -i '/\[main\]/a dns=dnsmasq' /etc/NetworkManager/NetworkManager.conf
 sudo nmcli con add type wifi ifname wlan0 mode ap con-name "$apName" ssid "$apName" autoconnect true
-sudo nmcli con modify raspiAP 802-11-wireless.band bg
-sudo nmcli con modify raspiAP 802-11-wireless.channel 3
-sudo nmcli con modify raspiAP 802-11-wireless.cloned-mac-address 00:12:34:56:78:9a
-sudo nmcli con modify raspiAP 802-11-wireless.powersave disable
-sudo nmcli con modify raspiAP ipv4.method shared ipv4.address "$ip"/24
-sudo nmcli con modify raspiAP ipv6.method disabled
-sudo nmcli con modify raspiAP wifi-sec.key-mgmt wpa-psk
-sudo nmcli con modify raspiAP wifi-sec.psk "$pw1"
+sudo nmcli con modify "$apName" 802-11-wireless.band bg
+sudo nmcli con modify "$apName" 802-11-wireless.channel 3
+sudo nmcli con modify "$apName" 802-11-wireless.cloned-mac-address 00:12:34:56:78:9a
+sudo nmcli con modify "$apName" 802-11-wireless.powersave disable
+sudo nmcli con modify "$apName" ipv4.method shared ipv4.address "$ip"/24
+sudo nmcli con modify "$apName" ipv6.method disabled
+sudo nmcli con modify "$apName" wifi-sec.key-mgmt wpa-psk
+sudo nmcli con modify "$apName" wifi-sec.psk "$pw1"
 # Webserver ----------------------------------------------------------------------------------------------------
 wget $webserverPyScript
 wget $webserverHtmlIndex
