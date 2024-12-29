@@ -6,6 +6,7 @@ echo "\n${CYAN}########## Welcome! ##########"
 
 #source config.sh
 camPyScript="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/camera/camera.py"
+camSettingsIni="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/camera/settings.ini"
 webserverPyScript="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/webserver/webserver.py"
 webserverHtmlFiles="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/webserver/templates/files.html"
 webserverHtmlIndex="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/webserver/templates/index.html"
@@ -49,16 +50,19 @@ then
     wget $webserverHtmlFiles
     python -m venv --system-site-packages ~/PythonVenv/Webserver
     mkdir ~/PythonVenv/Webserver/templates
+    mkdir ~/PythonVenv/Webserver/static
+    mkdir ~/video_files
     mv ./webserver.py ~/PythonVenv/Webserver/
     mv ./index.html ~/PythonVenv/Webserver/templates/
-    mv ./files.html ~/PythonVenv/Webserver/templates/
-    mkdir ~/video_files
+    mv ./files.html ~/PythonVenv/Webserver/templates/    
     ~/PythonVenv/Webserver/bin/pip install flask-wtf
     (crontab -l ; echo "@reboot wait 20;~/PythonVenv/Webserver/bin/python ~/PythonVenv/Webserver/webserver.py > webserverLog.txt 2>&1") | crontab -
     # Camera ----------------------------------------------------------------------------------------------------
     wget $camPyScript
+    wget $camSettingsIni
     python -m venv --system-site-packages ~/PythonVenv/Cam
     mv ./camera.py ~/PythonVenv/Cam/
+    mv ./settings.ini ~/PythonVenv/Cam/
     # Other ----------------------------------------------------------------------------------------------------
     sudo sed -i '$a cam ALL=NOPASSWD:/sbin/shutdown' /etc/sudoers
     sudo sed -i '$a cam ALL=NOPASSWD:/sbin/reboot' /etc/sudoers
