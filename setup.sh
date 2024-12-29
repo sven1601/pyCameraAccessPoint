@@ -86,8 +86,9 @@ echo  "All Done! The RPi IP Address is "$ip""
 echo  "The AP will be started during the next reboot"
 echo
 
-read -p "Reboot now? [y/n] " reboot
+read -p "Activate AP and Reboot now? [y/n] " reboot
 if [ "$reboot" = "y" ]; then
+    sudo nmcli con up "$apName"
     sudo reboot
 fi
 
