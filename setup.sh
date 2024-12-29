@@ -24,8 +24,7 @@ if [ "$pw1" = "$pw2" ] && \
    [ $(expr length "$pw1") -gt 7 ] && \
    [ $(expr length "$pw2") -gt 7 ] && \
    [ $(expr length "$ip") -gt 0 ] && \
-   [ $(expr length "$apName") -gt 0 ] && \
-   [ $(expr length "$camAutostart") -eq 1 ] && ([ "$camAutostart" = "y" ] || [ "$camAutostart" = "n" ])
+   [ $(expr length "$apName") -gt 0 ]
 then
     # Access Point ----------------------------------------------------------------------------------------------------    
     sudo raspi-config nonint do_wifi_country "$wifiCode"
