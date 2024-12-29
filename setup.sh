@@ -1,13 +1,14 @@
 #!/bin/bash
-echo "\n########## Welcome! ##########"
+echo 
+echo "Welcome!"
+echo "Please enter your desired configuration:"
+echo 
 
 camPyScript="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/camera/camera.py"
 camSettingsIni="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/camera/settings.ini"
 webserverPyScript="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/webserver/webserver.py"
 webserverHtmlFiles="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/webserver/templates/files.html"
 webserverHtmlIndex="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/webserver/templates/index.html"
-
-echo "\n${GRE}Setting up WiFi Access Point...${NC}"
 
 read -p "Enter your desired ap name: " apName
 read -p "Enter your WiFi Countrycode (US, DE, ...): " wifiCode
@@ -34,6 +35,10 @@ elif [ ! $(expr length "$apName") -gt 2 ]; then
     echo "AP name too short, please check your input"
     exit
 fi
+
+echo 
+echo "Starting setup process...."
+echo 
 
 # Access Point ----------------------------------------------------------------------------------------------------    
 sudo raspi-config nonint do_wifi_country "$wifiCode"
@@ -75,10 +80,12 @@ mv ./settings.ini ~/PythonVenv/Cam/
 sudo sed -i '$a cam ALL=NOPASSWD:/sbin/shutdown' /etc/sudoers
 sudo sed -i '$a cam ALL=NOPASSWD:/sbin/reboot' /etc/sudoers
 # End ----------------------------------------------------------------------------------------------------
-echo "\n\n\n"
-echo          "########## All Done! The RPi IP Address is "$ip" ##########"
-echo          "########## Please reboot for changes to take effect  ######"
-echo "\n\n\n"
+
+echo
+echo  "All Done! The RPi IP Address is "$ip""
+echo  "The AP will be started during the next reboot"
+echo
+
 read -p "Reboot now? [y/n] " reboot
 if [ "$reboot" = "y" ]; then
     sudo reboot
