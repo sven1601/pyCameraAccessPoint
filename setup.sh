@@ -88,7 +88,9 @@ echo
 
 read -p "Activate AP and Reboot now? [y/n] " reboot
 if [ "$reboot" = "y" ]; then
+    echo "Ok ,the reboot may take some minutes..."
     sudo nmcli con up "$apName"
+    sleep 10s
     sudo reboot
 fi
 
