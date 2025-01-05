@@ -7,9 +7,12 @@
    An user initiated update after the first boot is not required, as this will be done during the setup process.
 2. Connect with SSH to your Rpi
 3. Run the following commands:
-   1. Download the setup script ---> "wget https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/setup.sh"
-   2. Make it executable ---> "sudo chmod +x ./setup.sh"
-   3. Run it ---> "./setup.sh"
+   - Download the setup script 
+      `wget https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/setup.sh`
+   - Make it executable
+      `sudo chmod +x ./setup.sh`
+   - Run it
+      `./setup.sh`
 
 All necessary data will be queried after the start of the script. 
 
