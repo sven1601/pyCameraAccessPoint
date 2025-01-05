@@ -3,7 +3,7 @@
 
 ## Setup
 
-1. Setup your Rpi as desired, with Wifi enabled as client, Username "cam", and SSH enabled (recommended) and reboot it.
+1. Setup your Rpi as desired, Wifi enabled as client, Username "cam", SSH enabled (recommended) and reboot it.
    An user initiated update after the first boot is not required, as this will be done during the setup process.
 2. Connect with SSH to your Rpi
 3. Run the following commands:
