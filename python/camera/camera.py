@@ -7,13 +7,16 @@ import libcamera
 import os
 from configparser import ConfigParser
 
-config = ConfigParser()
+# Paths
 cameraSettingsFile = '/home/cam/PythonVenv/Cam/settings.ini'
+
+# Globals
+config = ConfigParser()
 config.read(cameraSettingsFile)
 flipH = config.getint('main', 'flipH')
 flipV = config.getint('main', 'flipV')
 
-# Funktion zur Videoaufnahme
+# Video recording
 def record_video(filename, duration=60):
     global flipH
     global flipV
@@ -31,9 +34,8 @@ def record_video(filename, duration=60):
         config["transform"] = libcamera.Transform(hflip=True, vflip=True)
     camera.configure(config)
 
+    # Limit framerate and bitrate for better CPU load on Raspi Zero
     camera.controls.FrameRate = 20    
-
-    # Verwende FfmpegOutput mit libx264-Encoder
     encoder = H264Encoder(bitrate=2500000)
     output = FfmpegOutput(filename)
     camera.start_recording(encoder, output)
@@ -42,32 +44,30 @@ def record_video(filename, duration=60):
     camera.stop_recording()
     camera.close()
 
-# Funktion zum Verwalten der Videos im Ordner (unverändert)
+# File management (to limit the amount of video files, called loop recording)
 def manage_videos(directory, max_videos=3000):
     files = sorted(os.listdir(directory), key=lambda x: os.path.getctime(os.path.join(directory, x)))
+    # Delete the oldest file, as long as the limit is exceeded
     while len(files) > max_videos:
         os.remove(os.path.join(directory, files[0]))
         files = sorted(os.listdir(directory), key=lambda x: os.path.getctime(os.path.join(directory, x)))
 
 def main():
-    video_dir = os.path.expanduser("~/video_files")  # Benutze os.path.expanduser
-    video_duration = 60  # Sekunden
+    video_dir = os.path.expanduser("~/video_files")
+    video_duration = 60  # Video duration
 
+    # Create output folder if it doesn't exist
     if not os.path.exists(video_dir):
         os.makedirs(video_dir)
 
+    # Loop for recording
     while True:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        video_filename = os.path.join(video_dir, f"video_{timestamp}_{video_duration}sec_temp.mp4")  # Ändere die Dateierweiterung zu .mp4
-
-        # Aufnahme des Videos
+        video_filename = os.path.join(video_dir, f"video_{timestamp}_{video_duration}sec_temp.mp4")
         record_video(video_filename, video_duration)
-
-        print(video_filename)
-
-        # Verwalten der Videos im Ordner
+        # Manage the files after every record
         manage_videos(video_dir)
-
+        # Create the final filename, to mark it as finsihed
         new_filename = video_filename.replace('_temp.mp4', '.mp4')
         os.rename(video_filename, new_filename)
 

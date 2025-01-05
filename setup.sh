@@ -10,12 +10,14 @@ webserverPyScript="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoin
 webserverHtmlFiles="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/webserver/templates/files.html"
 webserverHtmlIndex="https://raw.githubusercontent.com/sven1601/pyCameraAccessPoint/refs/heads/main/python/webserver/templates/index.html"
 
+# Getting user input
 read -p "Enter your desired ap name: " apName
 read -p "Enter your WiFi Countrycode (US, DE, ...): " wifiCode
 read -p "Enter your desired password: " pw1
 read -p "Enter your desired password (again): " pw2
 read -p "Enter your desired ap ip address: " ip
 
+# Checking input for valid data
 if [ ! "$pw1" == "$pw2" ]; then
     echo "Pasword not equal, please check input"
     exit
@@ -40,7 +42,7 @@ echo
 echo "Starting setup process...."
 echo 
 
-# Access Point ----------------------------------------------------------------------------------------------------    
+# Setup Access Point ----------------------------------------------------------------------------------------------------    
 sudo raspi-config nonint do_wifi_country "$wifiCode"
 sudo apt update
 sudo apt upgrade -y
@@ -57,7 +59,7 @@ sudo nmcli con modify "$apName" ipv4.method shared ipv4.address "$ip"/24
 sudo nmcli con modify "$apName" ipv6.method disabled
 sudo nmcli con modify "$apName" wifi-sec.key-mgmt wpa-psk
 sudo nmcli con modify "$apName" wifi-sec.psk "$pw1"
-# Webserver ----------------------------------------------------------------------------------------------------
+# Setup Webserver ----------------------------------------------------------------------------------------------------
 wget $webserverPyScript
 wget $webserverHtmlIndex
 wget $webserverHtmlFiles
@@ -70,23 +72,26 @@ mv ./index.html ~/PythonVenv/Webserver/templates/
 mv ./files.html ~/PythonVenv/Webserver/templates/    
 ~/PythonVenv/Webserver/bin/pip install flask-wtf
 (crontab -l ; echo "@reboot wait 20;~/PythonVenv/Webserver/bin/python ~/PythonVenv/Webserver/webserver.py > webserverLog.txt 2>&1") | crontab -
-# Camera ----------------------------------------------------------------------------------------------------
+# Setup Camera ----------------------------------------------------------------------------------------------------
 wget $camPyScript
 wget $camSettingsIni
 python -m venv --system-site-packages ~/PythonVenv/Cam
 mv ./camera.py ~/PythonVenv/Cam/
 mv ./settings.ini ~/PythonVenv/Cam/
-# Other ----------------------------------------------------------------------------------------------------
+# Setup Other ----------------------------------------------------------------------------------------------------
 sudo sed -i '$a cam ALL=NOPASSWD:/sbin/shutdown' /etc/sudoers
 sudo sed -i '$a cam ALL=NOPASSWD:/sbin/reboot' /etc/sudoers
 # End ----------------------------------------------------------------------------------------------------
 
 echo
-echo  "All Done! The RPi IP Address is "$ip""
-echo  "The AP will be started during the next reboot"
+echo  "All Done! The new RPi IP Address is "$ip"."
+echo  "The AP will be started during the next reboot, this will take some moments."
+echo  "When available please connect to the new AP via Wifi --> "$apName"."
+echo  "The Webserver will be on http://"$ip":5000"
+echo  "Please consider enabling SSH for easy handling, when not already enabled"
 echo
 
-read -p "Activate AP and Reboot now? [y/n] " reboot
+read -p "Reboot now? [y/n] " reboot
 if [ "$reboot" = "y" ]; then
     echo "Ok ,the reboot may take some minutes..."
     sudo nmcli con up "$apName"

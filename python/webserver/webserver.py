@@ -8,13 +8,12 @@ from configparser import ConfigParser
 
 app = Flask(__name__)
 
-# Globale Variablen, um die Subprozesse zu speichern
+# Globals
 cameraProcess = None
 pictureProcess = None
-
 config = ConfigParser()
 
-# Pfad zum Ordner mit den aufzulistenden Dateien
+# Paths
 files_dir = '/home/cam/video_files/'
 cameraSettingsFile = '/home/cam/PythonVenv/Cam/settings.ini'
 testPicture = '/home/cam/PythonVenv/Webserver/static/testPic.jpg'
@@ -23,9 +22,9 @@ testPicture = '/home/cam/PythonVenv/Webserver/static/testPic.jpg'
 def index():
     if request.method == "POST":
         try:
-            # Zeit vom Client empfangen (im Format 'YYYY-MM-DD HH:MM:SS')
+            # Receive time from client (format 'YYYY-MM-DD HH:MM:SS')
             new_time = request.form["time"] 
-            # Befehl zum Setzen der Systemzeit ausführen
+            # Set time
             subprocess.run(["sudo", "date", "-s", new_time])  
             return "Time is set!"
         except Exception as e:
@@ -35,7 +34,8 @@ def index():
 @app.route('/start_camScript')
 def start_script1():
     global cameraProcess
-    if cameraProcess is None or cameraProcess.poll() is not None:  # Startet nur, wenn es nicht bereits läuft
+    # Start camera python script if not running
+    if cameraProcess is None or cameraProcess.poll() is not None: 
         with open("/home/cam/PythonVenv/Cam/output.txt", "w") as outfile, open("/home/cam/PythonVenv/Cam/error.txt", "w") as errfile:
             cameraProcess = subprocess.Popen(['/home/cam/PythonVenv/Cam/bin/python', '/home/cam/PythonVenv/Cam/camera.py'], stdout=outfile, stderr=errfile)
             return f'camera.py is running ---> PID {cameraProcess.pid}'
@@ -45,9 +45,10 @@ def start_script1():
 @app.route('/stop_camScript')
 def stop_script1():
     global cameraProcess
+    # Kill process if it is running
     if cameraProcess is not None and cameraProcess.poll() is None:
         oldPid = cameraProcess.pid
-        os.kill(cameraProcess.pid, signal.SIGTERM)  # Sendet SIGTERM zum Beenden
+        os.kill(cameraProcess.pid, signal.SIGTERM)
         cameraProcess = None
         return f'camera.py is stopped ---> PID {oldPid}'
     else:
@@ -56,6 +57,7 @@ def stop_script1():
 @app.route('/list_files')
 def list_files():
     file_list = os.listdir(files_dir)
+    # Sorting reverse, so the latest file is at the top
     file_list.sort(reverse = True)
     fileCount = len(file_list)
     return render_template('files.html', files=file_list, fileNum=fileCount)
@@ -122,11 +124,12 @@ def flip_reset():
 
 @app.route('/get_picture')
 def get_picture():
+    # Delete existing picture
     call(f'rm {testPicture}', shell=True)
-
     config.read(cameraSettingsFile)
     flipH = config.getint('main', 'flipH')
     flipV = config.getint('main', 'flipV')
+    # Take picture with actual settings
     if flipH == 0 and flipV == 0:
         pictureProcess = subprocess.Popen(['rpicam-still', '-o', testPicture, '--width', '640', '--height', '480'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     elif flipH == 1 and flipV == 0:
