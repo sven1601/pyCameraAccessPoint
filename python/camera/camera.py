@@ -58,7 +58,7 @@ def main():
 
     while True:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        video_filename = os.path.join(video_dir, f"video_{timestamp}_{video_duration}sec.mp4")  # Ändere die Dateierweiterung zu .mp4
+        video_filename = os.path.join(video_dir, f"video_{timestamp}_{video_duration}sec_temp.mp4")  # Ändere die Dateierweiterung zu .mp4
 
         # Aufnahme des Videos
         record_video(video_filename, video_duration)
@@ -67,6 +67,9 @@ def main():
 
         # Verwalten der Videos im Ordner
         manage_videos(video_dir)
+
+        new_filename = video_filename.replace('_temp.mp4', '.mp4')
+        os.rename(video_filename, new_filename)
 
 if __name__ == "__main__":
     main()
